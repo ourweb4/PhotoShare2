@@ -7,19 +7,189 @@
 //
 
 import UIKit
+import WebKit
+import MediaPlayer
+import MobileCoreServices
+import AWSMobileHubHelper
 
-class ViewController: UIViewController {
+import ObjectiveC
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
+    
+    var prefix: String!
+    
+    private var manager: AWSUserFileManager!
+    private var contents: [AWSContent]?
+    private var marker: String?
 
+    @IBOutlet weak var tableview: UITableView!
+    
+    @IBOutlet weak var uploadbutton: UIBarButtonItem!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        manager = AWSUserFileManager.defaultUserFileManager()
         // Do any additional setup after loading the view, typically from a nib.
+ //       presentSignInViewController()
     }
 
+    
+    override func viewDidAppear(animated: Bool) {
+        if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
+            uploadbutton.enabled =  true
+            let userId = AWSIdentityManager.defaultIdentityManager().identityId!
+            prefix = "\(userId)/"
+            
+        } else {
+            // dont allow upload if not login
+            uploadbutton.enabled = false
+        }
+    }
+    
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
+    // upload section
+    @IBAction func upload_click(sender: AnyObject) {
+         ImagePicker()
+    }
+    
+    // Image picker
+    private func ImagePicker() {
+        let imagepickercontroler: UIImagePickerController = UIImagePickerController()
+        imagepickercontroler.allowsEditing = false
+        imagepickercontroler.sourceType = .PhotoLibrary
+        imagepickercontroler.delegate = self
+        presentViewController(imagepickercontroler, animated: true, completion: nil)
+        
+    }
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        dismissViewControllerAnimated(true, completion: nil)
+        let image: UIImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+        askForFilename(UIImagePNGRepresentation(image)!)
+        
+    }
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    private func showSimpleAlertWithTitle(title: String, message: String, cancelButtonTitle cancelTitle: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
 
+    private func askForFilename(data: NSData) {
+        let alertController = UIAlertController(title: "File Name", message: "Please specify the file name.", preferredStyle: .Alert)
+        alertController.addTextFieldWithConfigurationHandler(nil)
+        let doneAction = UIAlertAction(title: "Done", style: .Default, handler: {[unowned self](action: UIAlertAction) -> Void in
+            let specifiedKey = alertController.textFields!.first!.text!
+            if specifiedKey.characters.count == 0 {
+                self.showSimpleAlertWithTitle("Error", message: "The file name cannot be empty.", cancelButtonTitle: "OK")
+                return
+            } else {
+                let key: String = "\(self.prefix)\(specifiedKey)"
+                self.uploadWithData(data, forKey: key)
+            }
+            })
+        alertController.addAction(doneAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    private func askForDirectoryName() {
+        let alertController: UIAlertController = UIAlertController(title: "Directory Name", message: "Please specify the directory name.", preferredStyle: .Alert)
+        alertController.addTextFieldWithConfigurationHandler(nil)
+        let doneAction: UIAlertAction = UIAlertAction(title: "Done", style: .Default, handler: {[weak self](action: UIAlertAction) -> Void in
+            guard let strongSelf = self else { return }
+            let specifiedKey = alertController.textFields!.first!.text!
+            if specifiedKey.characters.count == 0 {
+                strongSelf.showSimpleAlertWithTitle("Error", message: "The directory name cannot be empty.", cancelButtonTitle: "OK")
+                return
+            } else {
+                let key = "\(strongSelf.prefix)\(specifiedKey)/"
+               strongSelf.createFolderForKey(key)
+            }
+            })
+        alertController.addAction(doneAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    private func uploadLocalContent(localContent: AWSLocalContent) {
+        // upload the file
+        localContent.uploadWithPinOnCompletion(false, progressBlock: {[weak self](content: AWSLocalContent?, progress: NSProgress?) -> Void in
+            guard let strongSelf = self else { return }
+            dispatch_async(dispatch_get_main_queue()) {
+                // Update the upload UI if it is a new upload and the table is not yet updated
+               
+                    for uploadContent in strongSelf.manager.uploadingContents {
+                        if uploadContent.key == content?.key {
+                            let index = strongSelf.manager.uploadingContents.indexOf(uploadContent)!
+                            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+            //                strongSelf.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+                        }
+                    }
+                }
+                     }, completionHandler: {[weak self](content: AWSContent?, error: NSError?) -> Void in
+    guard let strongSelf = self else { return }    //strongSelf.updateUploadUI()
+    if let error = error {
+    print("Failed to upload an object. \(error)")
+    strongSelf.showSimpleAlertWithTitle("Error", message: "Failed to upload an object.", cancelButtonTitle: "OK")
+    }
+        
+        })
+}
+private func uploadWithData(data: NSData, forKey key: String) {
+    let localContent = manager.localContentWithData(data, key: key)
+    uploadLocalContent(localContent)
 }
 
+private func createFolderForKey(key: String) {
+    let localContent = manager.localContentWithData(nil, key: key)
+    uploadLocalContent(localContent)
+}
+
+    // download section
+    
+    
+    
+    private func downloadContent(content: AWSContent, pinOnCompletion: Bool) {
+        content.downloadWithDownloadType(.IfNewerExists, pinOnCompletion: pinOnCompletion, progressBlock: {[weak self](content: AWSContent?, progress: NSProgress?) -> Void in
+            guard let strongSelf = self else { return }
+            if strongSelf.contents!.contains( {$0 == content} ) {
+                let row = strongSelf.contents!.indexOf({$0  == content!})!
+                let indexPath = NSIndexPath(forRow: row, inSection: 1)
+           //     strongSelf.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            }
+            }, completionHandler: {[weak self](content: AWSContent?, data: NSData?, error: NSError?) -> Void in
+                guard let strongSelf = self else { return }
+                if let error = error {
+                    print("Failed to download a content from a server. \(error)")
+                    strongSelf.showSimpleAlertWithTitle("Error", message: "Failed to download a content from a server.", cancelButtonTitle: "OK")
+                }
+             //   strongSelf.updateUserInterface()
+            })
+    }
+    
+    
+    //table view section
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        <#code#>
+    }
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return contents!.count
+        
+     }
+}
