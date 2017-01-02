@@ -25,11 +25,11 @@
                                 <rect key="frame" x="0.0" y="78" width="369" height="552"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="130" id="AiD-st-QMe">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="130" id="AiD-st-QMe" customClass="PhotoCell" customModule="PhotoShare" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="369" height="130"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AiD-st-QMe" id="Gf4-hQ-Gix">
-                                            <rect key="frame" x="0.0" y="0.0" width="369" height="129"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="369" height="129.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rQU-Vq-eWD">
@@ -55,6 +55,10 @@
                                                 <constraint firstAttribute="bottom" secondItem="rQU-Vq-eWD" secondAttribute="bottom" constant="8" id="ycd-yz-7ej"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="photoimg" destination="rQU-Vq-eWD" id="d3d-h9-0gu"/>
+                                            <outlet property="titlelab" destination="qBx-ma-vnd" id="A8a-Sr-AKX"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>

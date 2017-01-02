@@ -18,7 +18,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var prefix: String!
     
     private var manager: AWSUserFileManager!
-    private var contents: [AWSContent]?
+    private var contents: [AWSContent] = [AWSContent]()
     private var marker: String?
 
     @IBOutlet weak var tableview: UITableView!
@@ -29,8 +29,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         manager = AWSUserFileManager.defaultUserFileManager()
-        // Do any additional setup after loading the view, typically from a nib.
- //       presentSignInViewController()
+    
+        tableview.delegate = self
+        tableview.dataSource = self
     }
 
     
@@ -39,7 +40,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             uploadbutton.enabled =  true
             let userId = AWSIdentityManager.defaultIdentityManager().identityId!
             prefix = "\(userId)/"
-            
+            reloadobjects()
+      
         } else {
             // dont allow upload if not login
             uploadbutton.enabled = false
@@ -95,6 +97,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             } else {
                 let key: String = "\(self.prefix)\(specifiedKey)"
                 self.uploadWithData(data, forKey: key)
+                self.reloadobjects()
             }
             })
         alertController.addAction(doneAction)
@@ -164,8 +167,8 @@ private func createFolderForKey(key: String) {
     private func downloadContent(content: AWSContent, pinOnCompletion: Bool) {
         content.downloadWithDownloadType(.IfNewerExists, pinOnCompletion: pinOnCompletion, progressBlock: {[weak self](content: AWSContent?, progress: NSProgress?) -> Void in
             guard let strongSelf = self else { return }
-            if strongSelf.contents!.contains( {$0 == content} ) {
-                let row = strongSelf.contents!.indexOf({$0  == content!})!
+            if strongSelf.contents.contains( {$0 == content} ) {
+                let row = strongSelf.contents.indexOf({$0  == content!})!
                 let indexPath = NSIndexPath(forRow: row, inSection: 1)
            //     strongSelf.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             }
@@ -179,17 +182,47 @@ private func createFolderForKey(key: String) {
             })
     }
     
+    private func downloadObjects() {
+        manager.listRecentContentsWithPrefix(prefix, completionHandler: {[weak self](result: AnyObject?, error: NSError?) -> Void in
+            guard let strongSelf = self else { return }
+            if let resultArray: [AWSContent] = result as? [AWSContent] {
+                for content: AWSContent in resultArray {
+                    if !content.cached && !content.directory {
+                        strongSelf.downloadContent(content, pinOnCompletion: false)
+                        self!.contents.append(content)
+                    }
+                }
+            }
+            })
+    }
+    
+    private func reloadobjects() {
+        contents.removeAll()
+        if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
+            downloadObjects()
+        }
+        tableview.reloadData()
+    }
+    
     
     //table view section
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        <#code#>
+        
+        if let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCell") as?  PhotoCell {
+            let content = contents[indexPath.row]
+            cell.confcell(content)
+            return cell
+        } else {
+            return PhotoCell()
+        }
+        
     }
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contents!.count
+        return contents.count
         
      }
 }
