@@ -167,7 +167,6 @@
 				474C9F371E12EEF8001F3E95 /* SignIn */,
 				47D4740C1E0B1609005CF6F4 /* AmazonAws */,
 				470D9F291E12ACE700993567 /* UserIdentityAccess.swift */,
-				47D473F11E0B1358005CF6F4 /* Sdk */,
 			);
 			path = PhotoShare;
 			sourceTree = "<group>";
@@ -178,8 +177,7 @@
 				47D473F21E0B1358005CF6F4 /* Aws */,
 				47D473FA1E0B1358005CF6F4 /* CheckXcodeVersion.sh */,
 			);
-			name = Sdk;
-			path = ../Sdk;
+			path = Sdk;
 			sourceTree = "<group>";
 		};
 		47D473F21E0B1358005CF6F4 /* Aws */ = {
@@ -214,6 +212,7 @@
 		47D474131E0B19A9005CF6F4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				47D473F11E0B1358005CF6F4 /* Sdk */,
 				47D473DD1E0B125C005CF6F4 /* Products */,
 				47D474141E0B19A9005CF6F4 /* libz.tbd */,
 			);

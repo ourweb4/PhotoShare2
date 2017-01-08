@@ -25,27 +25,32 @@ class PhotoCell: UITableViewCell {
         // Initialization code
     }
     
-    func confcell(content: AWSContent) {
+    func confcell(content: AWSContent, prefix: String) {
        
-        content.downloadWithDownloadType(.IfNewerExists, pinOnCompletion: true, progressBlock: {[weak self](content: AWSContent?, progress: NSProgress?) -> Void in
-            guard let strongSelf = self else { return }
-         //   if strongSelf.contents!.contains( {$0 == content} ) {
-                //let row = strongSelf.contents!.indexOf({$0  == content!})!
-           //     let indexPath = NSIndexPath(forRow: row, inSection: 1)
-                //     strongSelf.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
-            //}
-            }, completionHandler: {[weak self](content: AWSContent?, data: NSData?, error: NSError?) -> Void in
-                guard let strongSelf = self else { return }
-                if let error = error {
-                    print("Failed to download a content from a server. \(error)")
-                //    strongSelf.showSimpleAlertWithTitle("Error", message: "Failed to download a content from a server.", cancelButtonTitle: "OK")
+               var displayFilename: String! = content.key
+        //     if let prefix = self.prefix {
+        if displayFilename.characters.count > prefix.characters.count {
+            displayFilename = displayFilename.substringFromIndex(prefix.endIndex)
+        }
+        //   }
+        
+//      print(displayFilename)
+        
+        if let name: String! = displayFilename {
+        
+        self.titlelab.text = name
+            content.getRemoteFileURLWithCompletionHandler({ (url: NSURL?, error: NSError?) -> Void in
+                guard let url = url else {
+                   return
                 }
                 
-            })
-        titlelab.text = content.key
-        photoimg.image = UIImage(data: content.cachedData)
-        content.unPin()
-    }
+                if let data = NSData(contentsOfURL: url) {
+                    let img = UIImage(data: data)
+                    self.photoimg.image = img
+                }
 
+        })
+    }
+    }
 
 }

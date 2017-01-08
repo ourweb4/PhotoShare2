@@ -23,12 +23,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     @IBOutlet weak var tableview: UITableView!
     
-    @IBOutlet weak var uploadbutton: UIBarButtonItem!
+    @IBOutlet weak var uploadbutton: UIButton!
     
-    
+     
     override func viewDidLoad() {
         super.viewDidLoad()
-        manager = AWSUserFileManager.defaultUserFileManager()
+        
     
         tableview.delegate = self
         tableview.dataSource = self
@@ -38,17 +38,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidAppear(animated: Bool) {
         if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
             uploadbutton.enabled =  true
+            self.manager = AWSUserFileManager.defaultUserFileManager()
+            self.manager.clearCache()
             let userId = AWSIdentityManager.defaultIdentityManager().identityId!
-            prefix = "\(userId)/"
+           self.prefix = "private/\(userId)/"
             reloadobjects()
+        //    self.tableview.reloadData()
       
         } else {
             // dont allow upload if not login
             uploadbutton.enabled = false
         }
     }
-    
-    
+     
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -59,14 +61,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBAction func upload_click(sender: AnyObject) {
          ImagePicker()
     }
+   
     
     // Image picker
     private func ImagePicker() {
         let imagepickercontroler: UIImagePickerController = UIImagePickerController()
         imagepickercontroler.allowsEditing = false
-        imagepickercontroler.sourceType = .PhotoLibrary
+        imagepickercontroler.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagepickercontroler.delegate = self
-        presentViewController(imagepickercontroler, animated: true, completion: nil)
+        self.presentViewController(imagepickercontroler, animated: true, completion: nil)
         
     }
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -150,10 +153,31 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         })
 }
+    /*
 private func uploadWithData(data: NSData, forKey key: String) {
     let localContent = manager.localContentWithData(data, key: key)
     uploadLocalContent(localContent)
 }
+    */
+    
+    
+    private func uploadWithData(data: NSData, forKey key: String) {
+             let localContent = manager.localContentWithData(data, key: key)
+        localContent.uploadWithPinOnCompletion(
+            false,
+            progressBlock: {[weak self](content: AWSLocalContent?, progress: NSProgress?) -> Void in
+                guard let strongSelf = self else { return }
+                /* Show progress in UI. */
+            },
+            completionHandler: {[weak self](content: AWSContent?, error: NSError?) -> Void in
+                guard let strongSelf = self else { return }
+                if let error = error {
+                    print("Failed to upload an object. \(error)")
+                } else {
+                    print("Object upload complete. ")
+                }
+            })
+    }
 
 private func createFolderForKey(key: String) {
     let localContent = manager.localContentWithData(nil, key: key)
@@ -183,15 +207,21 @@ private func createFolderForKey(key: String) {
     }
     
     private func downloadObjects() {
+        //get all objects/files
         manager.listRecentContentsWithPrefix(prefix, completionHandler: {[weak self](result: AnyObject?, error: NSError?) -> Void in
             guard let strongSelf = self else { return }
+            if  error != nil {
+                print (error)
+            }
             if let resultArray: [AWSContent] = result as? [AWSContent] {
                 for content: AWSContent in resultArray {
                     if !content.cached && !content.directory {
-                        strongSelf.downloadContent(content, pinOnCompletion: false)
+                        print("**Key=\(content.key)")
+                        self!.downloadContent(content, pinOnCompletion: false)
                         self!.contents.append(content)
                     }
                 }
+              self!.tableview.reloadData()
             }
             })
     }
@@ -201,7 +231,7 @@ private func createFolderForKey(key: String) {
         if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
             downloadObjects()
         }
-        tableview.reloadData()
+//        self.tableview.reloadData()
     }
     
     
@@ -211,10 +241,17 @@ private func createFolderForKey(key: String) {
         
         if let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCell") as?  PhotoCell {
             let content = contents[indexPath.row]
-            cell.confcell(content)
+            cell.confcell(content, prefix: prefix)
             return cell
-        } else {
-            return PhotoCell()
+        } else
+        {
+            let cell = PhotoCell()
+            
+            let content = contents[indexPath.row]
+            
+           cell.confcell(content, prefix: prefix)
+           // cell.titlelab.text = content.key
+            return cell
         }
         
     }
@@ -222,7 +259,28 @@ private func createFolderForKey(key: String) {
         return 1
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contents.count
+        return self.contents.count
         
      }
+}
+
+
+extension AWSContent {
+    private func isAudioVideo() -> Bool {
+        let lowerCaseKey = self.key.lowercaseString
+        return lowerCaseKey.hasSuffix(".mov")
+            || lowerCaseKey.hasSuffix(".mp4")
+            || lowerCaseKey.hasSuffix(".mpv")
+            || lowerCaseKey.hasSuffix(".3gp")
+            || lowerCaseKey.hasSuffix(".mpeg")
+            || lowerCaseKey.hasSuffix(".aac")
+            || lowerCaseKey.hasSuffix(".mp3")
+    }
+    
+    private func isImage() -> Bool {
+        let lowerCaseKey = self.key.lowercaseString
+        return lowerCaseKey.hasSuffix(".jpg")
+            || lowerCaseKey.hasSuffix(".png")
+            || lowerCaseKey.hasSuffix(".jpeg")
+    }
 }
