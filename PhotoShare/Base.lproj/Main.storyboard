@@ -29,7 +29,7 @@
                                         <rect key="frame" x="0.0" y="28" width="369" height="130"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AiD-st-QMe" id="Gf4-hQ-Gix">
-                                            <rect key="frame" x="0.0" y="0.0" width="369" height="130"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="369" height="129.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rQU-Vq-eWD">
@@ -99,11 +99,63 @@
                     <connections>
                         <outlet property="tableview" destination="BNw-He-izs" id="jhT-Cr-22P"/>
                         <outlet property="uploadbutton" destination="8i4-pY-IYP" id="1LU-G2-dIG"/>
+                        <segue destination="nGz-uw-eTd" kind="show" identifier="showimages" id="stV-UT-vdV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1055.2" y="123.68815592203899"/>
+        </scene>
+        <!--ShowimagesVC-->
+        <scene sceneID="c1q-FF-YTl">
+            <objects>
+                <viewController id="nGz-uw-eTd" customClass="showimagesVC" customModule="PhotoShare" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4uJ-r2-Rfk"/>
+                        <viewControllerLayoutGuide type="bottom" id="qj6-lv-XCa"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="hcd-2P-pyz">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tvR-4X-KRY">
+                                <rect key="frame" x="0.0" y="72" width="359" height="504"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qst-gP-Ncc">
+                                <rect key="frame" x="0.0" y="637" width="31" height="30"/>
+                                <state key="normal" title="Prev"/>
+                                <connections>
+                                    <action selector="prevbut:" destination="nGz-uw-eTd" eventType="touchUpInside" id="EF4-sr-Xbg"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ehy-3h-0Kf">
+                                <rect key="frame" x="327" y="637" width="32" height="30"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="nextbuxt:" destination="nGz-uw-eTd" eventType="touchUpInside" id="mG8-ub-vD5"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="tvR-4X-KRY" firstAttribute="top" secondItem="4uJ-r2-Rfk" secondAttribute="bottom" constant="8" id="38H-aE-C7l"/>
+                            <constraint firstItem="qj6-lv-XCa" firstAttribute="top" secondItem="tvR-4X-KRY" secondAttribute="bottom" constant="47" id="DgD-QO-TNf"/>
+                            <constraint firstAttribute="bottom" secondItem="qst-gP-Ncc" secondAttribute="bottom" id="O2a-lG-6b1"/>
+                            <constraint firstItem="tvR-4X-KRY" firstAttribute="leading" secondItem="hcd-2P-pyz" secondAttribute="leading" id="PuU-4s-36O"/>
+                            <constraint firstItem="ehy-3h-0Kf" firstAttribute="bottom" secondItem="hcd-2P-pyz" secondAttribute="bottomMargin" id="dW9-NQ-KP9"/>
+                            <constraint firstItem="qst-gP-Ncc" firstAttribute="leading" secondItem="hcd-2P-pyz" secondAttribute="leading" id="fca-eJ-fzl"/>
+                            <constraint firstAttribute="trailing" secondItem="tvR-4X-KRY" secondAttribute="trailing" constant="16" id="fjm-PU-3Tc"/>
+                            <constraint firstItem="ehy-3h-0Kf" firstAttribute="trailing" secondItem="hcd-2P-pyz" secondAttribute="trailingMargin" id="g58-04-ja2"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems/>
+                    <connections>
+                        <outlet property="mainimg" destination="tvR-4X-KRY" id="EM9-PC-KU2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0jB-bh-Qmw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1082.4000000000001" y="801.94902548725645"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7Og-GC-B3c">

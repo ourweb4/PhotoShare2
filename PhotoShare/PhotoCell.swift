@@ -39,18 +39,25 @@ class PhotoCell: UITableViewCell {
         if let name: String! = displayFilename {
         
         self.titlelab.text = name
-            content.getRemoteFileURLWithCompletionHandler({ (url: NSURL?, error: NSError?) -> Void in
-                guard let url = url else {
-                   return
-                }
-                
-                if let data = NSData(contentsOfURL: url) {
-                    let img = UIImage(data: data)
-                    self.photoimg.image = img
-                }
-
-        })
-    }
+            if content.cached {
+            let data = content.cachedData
+            let img = UIImage(data: data)
+            photoimg.image  = img
+            } else {
+                content.getRemoteFileURLWithCompletionHandler({[weak self](url: NSURL?, error: NSError?) -> Void in
+                    guard let strongSelf = self else { return }
+                    guard let url = url else {
+                        print("Error getting URL for file. \(error)")
+                        return
+                    }
+                    let data = NSData(contentsOfURL: url)
+                    let img =  UIImage(data: data!)
+                    self?.photoimg.image = img
+      
+                })
+            }
+            
+        }
     }
 
 }

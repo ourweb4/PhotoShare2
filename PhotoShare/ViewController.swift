@@ -175,6 +175,7 @@ private func uploadWithData(data: NSData, forKey key: String) {
                     print("Failed to upload an object. \(error)")
                 } else {
                     print("Object upload complete. ")
+                    //self?.reloadobjects()
                 }
             })
     }
@@ -208,20 +209,22 @@ private func createFolderForKey(key: String) {
     
     private func downloadObjects() {
         //get all objects/files
-        manager.listRecentContentsWithPrefix(prefix, completionHandler: {[weak self](result: AnyObject?, error: NSError?) -> Void in
+        
+        manager.listAvailableContentsWithPrefix(prefix, marker: marker, completionHandler: {[weak self](result: [AWSContent]?, rmark: String?, error: NSError?) -> Void in
             guard let strongSelf = self else { return }
             if  error != nil {
                 print (error)
             }
-            if let resultArray: [AWSContent] = result as? [AWSContent] {
+            if let resultArray: [AWSContent] = result  {
                 for content: AWSContent in resultArray {
                     if !content.cached && !content.directory {
                         print("**Key=\(content.key)")
-                        self!.downloadContent(content, pinOnCompletion: false)
+                        self!.downloadContent(content, pinOnCompletion: true)
                         self!.contents.append(content)
+                        self!.tableview.reloadData()
                     }
-                }
-              self!.tableview.reloadData()
+              }
+            //  self!.tableview.reloadData()
             }
             })
     }
@@ -234,6 +237,24 @@ private func createFolderForKey(key: String) {
 //        self.tableview.reloadData()
     }
     
+    //segue
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let ident = segue.identifier {
+            switch ident {
+            case "showimages" :
+                let showimagesvc = segue.destinationViewController as! showimagesVC
+        //        if let indexpath = self.tableview.indexPathForCell(sender as! PhotoCell) {
+                    showimagesvc.conrents = self.contents
+                    showimagesvc.index = sender as! Int
+                    
+                
+                
+            default:
+                break
+            }
+        }
+    }
     
     //table view section
     
@@ -255,6 +276,14 @@ private func createFolderForKey(key: String) {
         }
         
     }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        performSegueWithIdentifier("showimages", sender: indexPath.row)
+        
+    }
+    
+    
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
