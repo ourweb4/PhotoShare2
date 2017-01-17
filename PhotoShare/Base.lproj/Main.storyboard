@@ -135,13 +135,22 @@
                                     <action selector="nextbuxt:" destination="nGz-uw-eTd" eventType="touchUpInside" id="mG8-ub-vD5"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5nY-Hq-j8C">
+                                <rect key="frame" x="144.5" y="637" width="55" height="30"/>
+                                <state key="normal" title="Remove"/>
+                                <connections>
+                                    <action selector="removebut:" destination="nGz-uw-eTd" eventType="touchUpInside" id="Y9l-Ln-MCK"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="tvR-4X-KRY" firstAttribute="top" secondItem="4uJ-r2-Rfk" secondAttribute="bottom" constant="8" id="38H-aE-C7l"/>
+                            <constraint firstItem="5nY-Hq-j8C" firstAttribute="centerY" secondItem="hcd-2P-pyz" secondAttribute="centerY" constant="318.5" id="9gu-gC-bad"/>
                             <constraint firstItem="qj6-lv-XCa" firstAttribute="top" secondItem="tvR-4X-KRY" secondAttribute="bottom" constant="47" id="DgD-QO-TNf"/>
                             <constraint firstAttribute="bottom" secondItem="qst-gP-Ncc" secondAttribute="bottom" id="O2a-lG-6b1"/>
                             <constraint firstItem="tvR-4X-KRY" firstAttribute="leading" secondItem="hcd-2P-pyz" secondAttribute="leading" id="PuU-4s-36O"/>
+                            <constraint firstItem="5nY-Hq-j8C" firstAttribute="centerX" secondItem="hcd-2P-pyz" secondAttribute="centerX" constant="-15.5" id="SCL-kM-WoV"/>
                             <constraint firstItem="ehy-3h-0Kf" firstAttribute="bottom" secondItem="hcd-2P-pyz" secondAttribute="bottomMargin" id="dW9-NQ-KP9"/>
                             <constraint firstItem="qst-gP-Ncc" firstAttribute="leading" secondItem="hcd-2P-pyz" secondAttribute="leading" id="fca-eJ-fzl"/>
                             <constraint firstAttribute="trailing" secondItem="tvR-4X-KRY" secondAttribute="trailing" constant="16" id="fjm-PU-3Tc"/>

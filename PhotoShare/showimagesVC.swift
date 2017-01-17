@@ -49,6 +49,15 @@ class showimagesVC: UIViewController {
         }
     }
     
+    @IBAction func removebut(sender: AnyObject) {
+        
+           let content = conrents[index]
+           confirmForRemovingContent(content)
+        navigationController?.popToRootViewControllerAnimated(true)
+        
+    }
+    
+    
     func show(content: AWSContent) {
         if content.cached {
             let data = content.cachedData
@@ -70,6 +79,36 @@ class showimagesVC: UIViewController {
     }
     
     
+    private func confirmForRemovingContent(content: AWSContent) {
+        let alertController = UIAlertController(title: "Confirm", message: "Do you want to delete the content from the server? This cannot be undone.", preferredStyle: .Alert)
+        let okayAction = UIAlertAction(title: "Yes", style: .Default, handler: {[weak self](action: UIAlertAction) -> Void in
+            guard let strongSelf = self else { return }
+            strongSelf.removeContent(content)
+            })
+        alertController.addAction(okayAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    private func removeContent(content: AWSContent) {
+        content.removeRemoteContentWithCompletionHandler({[weak self](content: AWSContent?, error: NSError?) -> Void in
+            guard let strongSelf = self else { return }
+            if let error = error {
+                print("Failed to delete an object from the remote server. \(error)")
+                dispatch_async(dispatch_get_main_queue()) {
+               //     strongSelf.showSimpleAlertWithTitle("Error", message: "Failed to delete an object from the remote server.", cancelButtonTitle: "OK")
+                }
+            } else {
+                dispatch_async(dispatch_get_main_queue()) {
+              //      strongSelf.showSimpleAlertWithTitle("Object Deleted", message: "The object has been deleted successfully.", cancelButtonTitle: "OK")
+                }
+            //    strongSelf.refreshContents()
+            }
+            })
+    }
+    
+   
     /*
     // MARK: - Navigation
 
