@@ -1,5 +1,5 @@
 //
-//  PhotoCell.swift
+//  PhotoCellAWS.swift
 //  PhotoShare
 //
 //  Created by Bill Banks on 1/2/17.
@@ -9,12 +9,12 @@
 import UIKit
 import AWSMobileHubHelper
 
-class PhotoCell: UITableViewCell {
+class PhotoCellAWS: UITableViewCell {
 
     
     
     @IBOutlet weak var photoimg: UIImageView!
-    @IBOutlet weak var titlelab: UILabel!
+    //@IBOutlet weak var titlelab: UILabel!
     
     
     
@@ -38,7 +38,7 @@ class PhotoCell: UITableViewCell {
         
         if let name: String! = displayFilename {
         
-        self.titlelab.text = name
+ //       self.titlelab.text = name
             if content.cached {
             let data = content.cachedData
             let img = UIImage(data: data)
@@ -51,8 +51,9 @@ class PhotoCell: UITableViewCell {
                         return
                     }
                     let data = NSData(contentsOfURL: url)
-                    let img =  UIImage(data: data!)
-                    self?.photoimg.image = img
+                    if  let img =  UIImage(data: data!) {
+                        self!.photoimg.image = img
+                    }
       
                 })
             }

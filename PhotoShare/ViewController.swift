@@ -11,6 +11,8 @@ import WebKit
 import MediaPlayer
 import MobileCoreServices
 import AWSMobileHubHelper
+import BSImagePicker
+import Photos
 
 import ObjectiveC
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
@@ -20,6 +22,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     private var manager: AWSUserFileManager!
     private var contents: [AWSContent] = [AWSContent]()
     private var marker: String?
+    private var images: [UIImage] = [UIImage]()
 
     @IBOutlet weak var tableview: UITableView!
     
@@ -65,13 +68,49 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Image picker
     private func ImagePicker() {
-        let imagepickercontroler: UIImagePickerController = UIImagePickerController()
+/*        let imagepickercontroler: UIImagePickerController = UIImagePickerController()
         imagepickercontroler.allowsEditing = false
         imagepickercontroler.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagepickercontroler.delegate = self
         self.presentViewController(imagepickercontroler, animated: true, completion: nil)
+        */
+        let vc = BSImagePickerViewController()
+        images.removeAll()
+        
+        bs_presentImagePickerController(vc, animated: true,
+                select: { (asset: PHAsset) -> Void in
+                  // User selected an asset.
+                 // Do something with it, start upload perhaps?
+            }, deselect: { (asset: PHAsset) -> Void in
+                // User deselected an assets.
+                // Do something, cancel upload?
+            }, cancel: { (assets: [PHAsset]) -> Void in
+                // User cancelled. And this where the assets currently selected.
+            }, finish: { (assets: [PHAsset]) -> Void in
+                // User finished with these assets
+                for asset in assets {
+                    let img = self.getAsset(asset)
+                    self.images.append(img)
+                }
+                self.uploadimages()
+            }, completion: nil)
         
     }
+    
+    func getAsset(asset: PHAsset) -> UIImage {
+    var image = UIImage()
+    let imgManager = PHImageManager.defaultManager()
+    let requestOptions = PHImageRequestOptions()
+    requestOptions.synchronous = true
+        let width  = CGFloat(asset.pixelWidth)
+        let height = CGFloat(asset.pixelHeight)
+        
+    imgManager.requestImageForAsset(asset, targetSize: CGSizeMake(width, height), contentMode: PHImageContentMode.AspectFit, options: requestOptions, resultHandler: { (img, _) in
+    image = img!
+    })
+    return image
+    }
+
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
         let image: UIImage = info[UIImagePickerControllerOriginalImage] as! UIImage
@@ -192,9 +231,20 @@ private func uploadWithData(data: NSData, forKey key: String) {
                     print("Failed to upload an object. \(error)")
                 } else {
                     print("Object upload complete. ")
-                    //self?.reloadobjects()
+                    self?.reloadobjects()
                 }
             })
+    }
+    
+    private func uploadimages() {
+        for iimg in images {
+            let data = UIImagePNGRepresentation(iimg)!
+            let fn = randomString(15)
+            let key: String = "\(self.prefix)\(fn)"
+            self.uploadWithData(data, forKey: key)
+            
+        }
+ //         reloadobjects()
     }
 
 private func createFolderForKey(key: String) {
@@ -277,13 +327,13 @@ private func createFolderForKey(key: String) {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        if let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCell") as?  PhotoCell {
+        if let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCellAWS") as?  PhotoCellAWS {
             let content = contents[indexPath.row]
             cell.confcell(content, prefix: prefix)
             return cell
         } else
         {
-            let cell = PhotoCell()
+            let cell = PhotoCellAWS()
             
             let content = contents[indexPath.row]
             
