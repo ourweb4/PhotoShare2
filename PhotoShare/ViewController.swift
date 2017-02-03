@@ -22,12 +22,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     private var manager: AWSUserFileManager!
     private var contents: [AWSContent] = [AWSContent]()
     private var marker: String?
+    private var username: String = ""
     private var images: [UIImage] = [UIImage]()
 
     @IBOutlet weak var tableview: UITableView!
     
     @IBOutlet weak var uploadbutton: UIButton!
     
+    @IBOutlet weak var refreshButton: UIButton!
+    @IBOutlet weak var shareButton: UIButton!
      
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,20 +40,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         tableview.dataSource = self
     }
 
-    
+    @IBAction func refresh_click(sender: AnyObject) {
+        reloadobjects()
+    }
+   
     override func viewDidAppear(animated: Bool) {
         if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
             uploadbutton.enabled =  true
+            shareButton.enabled = true
+            refreshButton.enabled = true
             self.manager = AWSUserFileManager.defaultUserFileManager()
             self.manager.clearCache()
             let userId = AWSIdentityManager.defaultIdentityManager().identityId!
            self.prefix = "private/\(userId)/"
             reloadobjects()
-        //    self.tableview.reloadData()
+            self.username =   AWSIdentityManager.defaultIdentityManager().userName!
+            let usertable = UserMasterTable()
+            usertable.adduser(userId, username: self.username)
+            
       
         } else {
             // dont allow upload if not login
             uploadbutton.enabled = false
+            shareButton.enabled = false
+            refreshButton.enabled = false
         }
     }
      
@@ -227,7 +240,7 @@ private func uploadWithData(data: NSData, forKey key: String) {
             },
             completionHandler: {[weak self](content: AWSContent?, error: NSError?) -> Void in
                 guard let strongSelf = self else { return }
-                if let error = error {
+                if let error = error { 
                     print("Failed to upload an object. \(error)")
                 } else {
                     print("Object upload complete. ")
@@ -285,7 +298,7 @@ private func createFolderForKey(key: String) {
             if let resultArray: [AWSContent] = result  {
                 for content: AWSContent in resultArray {
                     if !content.cached && !content.directory {
-                        print("**Key=\(content.key)")
+                //print("**Key=\(content.key)")
                         self!.downloadContent(content, pinOnCompletion: true)
                         self!.contents.append(content)
                         self!.tableview.reloadData()
@@ -349,6 +362,7 @@ private func createFolderForKey(key: String) {
         performSegueWithIdentifier("showimages", sender: indexPath.row)
         
     }
+    
     
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
