@@ -29,6 +29,9 @@
 		4765CED01E40D2700038E670 /* UserMasterTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4765CECF1E40D2700038E670 /* UserMasterTable.swift */; };
 		4765CED21E40D5E30038E670 /* NoSQLModelHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4765CED11E40D5E30038E670 /* NoSQLModelHelpers.swift */; };
 		476B7DAF1E1AB1AC00C1B287 /* PhotoCellAWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 476B7DAE1E1AB1AC00C1B287 /* PhotoCellAWS.swift */; };
+		477E73951E490D0100167B06 /* friendgalleryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477E73941E490D0100167B06 /* friendgalleryVC.swift */; };
+		477E73971E4A381700167B06 /* FPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477E73961E4A381700167B06 /* FPhotoCell.swift */; };
+		477E73991E4A583400167B06 /* FriendImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477E73981E4A583400167B06 /* FriendImageVC.swift */; };
 		479849EC1E43C9CF00506158 /* FriendsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479849EB1E43C9CF00506158 /* FriendsTable.swift */; };
 		479849EF1E4520C300506158 /* ShareVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479849EE1E4520C300506158 /* ShareVC.swift */; };
 		479849F11E45225A00506158 /* FriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479849F01E45225A00506158 /* FriendsVC.swift */; };
@@ -106,6 +109,9 @@
 		4765CECF1E40D2700038E670 /* UserMasterTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserMasterTable.swift; sourceTree = "<group>"; };
 		4765CED11E40D5E30038E670 /* NoSQLModelHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoSQLModelHelpers.swift; sourceTree = "<group>"; };
 		476B7DAE1E1AB1AC00C1B287 /* PhotoCellAWS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCellAWS.swift; sourceTree = "<group>"; };
+		477E73941E490D0100167B06 /* friendgalleryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = friendgalleryVC.swift; sourceTree = "<group>"; };
+		477E73961E4A381700167B06 /* FPhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPhotoCell.swift; sourceTree = "<group>"; };
+		477E73981E4A583400167B06 /* FriendImageVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendImageVC.swift; sourceTree = "<group>"; };
 		479849EB1E43C9CF00506158 /* FriendsTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsTable.swift; sourceTree = "<group>"; };
 		479849EE1E4520C300506158 /* ShareVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareVC.swift; sourceTree = "<group>"; };
 		479849F01E45225A00506158 /* FriendsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsVC.swift; sourceTree = "<group>"; };
@@ -248,10 +254,12 @@
 		479849ED1E44EDE100506158 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				47D473E11E0B125C005CF6F4 /* ViewController.swift */,
 				475DFF131E22B539003967D7 /* showimagesVC.swift */,
+				47D473E11E0B125C005CF6F4 /* ViewController.swift */,
 				479849EE1E4520C300506158 /* ShareVC.swift */,
 				479849F01E45225A00506158 /* FriendsVC.swift */,
+				477E73941E490D0100167B06 /* friendgalleryVC.swift */,
+				477E73981E4A583400167B06 /* FriendImageVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -281,6 +289,7 @@
 				47A0F2D61E12D6CC00A64B22 /* Info.plist */,
 				47D473DF1E0B125C005CF6F4 /* AppDelegate.swift */,
 				47D473E31E0B125C005CF6F4 /* Main.storyboard */,
+				477E73961E4A381700167B06 /* FPhotoCell.swift */,
 				476B7DAE1E1AB1AC00C1B287 /* PhotoCellAWS.swift */,
 				474C9F4B1E12F918001F3E95 /* Images.xcassets */,
 				471987411E3FCC3C00175164 /* Models */,
@@ -509,12 +518,15 @@
 				479849EC1E43C9CF00506158 /* FriendsTable.swift in Sources */,
 				4765CED21E40D5E30038E670 /* NoSQLModelHelpers.swift in Sources */,
 				479849F11E45225A00506158 /* FriendsVC.swift in Sources */,
+				477E73971E4A381700167B06 /* FPhotoCell.swift in Sources */,
 				470D9F2A1E12ACE700993567 /* UserIdentityAccess.swift in Sources */,
 				474C9F4A1E12EEF8001F3E95 /* UserPoolSignUpViewController.swift in Sources */,
+				477E73991E4A583400167B06 /* FriendImageVC.swift in Sources */,
 				474C9F441E12EEF8001F3E95 /* SignInViewControllerExtensions.swift in Sources */,
 				474C9F491E12EEF8001F3E95 /* UserPoolSignUpConfirmationViewController.swift in Sources */,
 				471987481E3FCC3C00175164 /* Friends.swift in Sources */,
 				47D473E01E0B125C005CF6F4 /* AppDelegate.swift in Sources */,
+				477E73951E490D0100167B06 /* friendgalleryVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

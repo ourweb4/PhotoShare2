@@ -82,6 +82,8 @@ class FriendsTable: NSObject, Table {
         
         let fech = FriendsPrimaryIndex(userna: AWSIdentityManager.defaultIdentityManager().userName!)
         
+        
+        
         fech.queryWithPartitionKeyWithCompletionHandler({ ( reponse: AWSDynamoDBPaginatedOutput?, error: NSError?) -> Void in
             
             if error == nil {

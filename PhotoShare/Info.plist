@@ -4,30 +4,7 @@
 <dict>
 	<key>AWS</key>
 	<dict>
-		<key>PinpointAnalytics</key>
-		<dict>
-			<key>Default</key>
-			<dict>
-				<key>AppId</key>
-				<string>02575a34402b4a09b4e4d8694dd54a8f</string>
-				<key>Region</key>
-				<string>us-east-1</string>
-			</dict>
-		</dict>
-		<key>PinpointTargeting</key>
-		<dict>
-			<key>Default</key>
-			<dict>
-				<key>Region</key>
-				<string>us-east-1</string>
-			</dict>
-		</dict>
-		<key>IdentityManager</key>
-		<dict>
-			<key>Default</key>
-			<dict/>
-		</dict>
-		<key>DynamoDBObjectMapper</key>
+		<key>Cognito</key>
 		<dict>
 			<key>Default</key>
 			<dict>
@@ -48,7 +25,7 @@
 				</dict>
 			</dict>
 		</dict>
-		<key>Cognito</key>
+		<key>DynamoDBObjectMapper</key>
 		<dict>
 			<key>Default</key>
 			<dict>
@@ -56,19 +33,42 @@
 				<string>us-east-1</string>
 			</dict>
 		</dict>
+		<key>IdentityManager</key>
+		<dict>
+			<key>Default</key>
+			<dict/>
+		</dict>
 		<key>MobileHub</key>
 		<dict>
 			<key>ProjectClientId</key>
 			<string>MobileHub 8cb241b4-42d5-463a-a5a7-4c11fe92d7fd aws-my-sample-app-ios-swift-v0.8</string>
 		</dict>
+		<key>PinpointAnalytics</key>
+		<dict>
+			<key>Default</key>
+			<dict>
+				<key>AppId</key>
+				<string>02575a34402b4a09b4e4d8694dd54a8f</string>
+				<key>Region</key>
+				<string>us-east-1</string>
+			</dict>
+		</dict>
+		<key>PinpointTargeting</key>
+		<dict>
+			<key>Default</key>
+			<dict>
+				<key>Region</key>
+				<string>us-east-1</string>
+			</dict>
+		</dict>
 		<key>UserFileManager</key>
 		<dict>
 			<key>Default</key>
 			<dict>
-				<key>S3Bucket</key>
-				<string>ourphotoshare-userfiles-mobilehub-69061703</string>
 				<key>Region</key>
 				<string>us-east-1</string>
+				<key>S3Bucket</key>
+				<string>ourphotoshare-userfiles-mobilehub-69061703</string>
 			</dict>
 		</dict>
 	</dict>
@@ -87,7 +87,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

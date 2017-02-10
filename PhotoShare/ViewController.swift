@@ -18,16 +18,25 @@ import ObjectiveC
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     var prefix: String!
+    @IBOutlet weak var messlab: UILabel!
     
+    @IBOutlet weak var verlab: UILabel!
     private var manager: AWSUserFileManager!
     private var contents: [AWSContent] = [AWSContent]()
     private var marker: String?
     private var username: String = ""
     private var images: [UIImage] = [UIImage]()
+    private var diskspace: UInt = 0
+    
+    let datalimit: UInt = 1073741824     // 1 GB
+    
 
     @IBOutlet weak var tableview: UITableView!
     
     @IBOutlet weak var uploadbutton: UIButton!
+    
+    @IBOutlet weak var ActInt: UIActivityIndicatorView!
+    
     
     @IBOutlet weak var refreshButton: UIButton!
     @IBOutlet weak var shareButton: UIButton!
@@ -41,10 +50,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
 
     @IBAction func refresh_click(sender: AnyObject) {
-        reloadobjects()
+        self.reloadobjects()
     }
    
     override func viewDidAppear(animated: Bool) {
+           let version: String = NSBundle .mainBundle() .objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
+        verlab.text = "Ver.  \(version)"
+        messlab.text = ""
         if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
             uploadbutton.enabled =  true
             shareButton.enabled = true
@@ -52,7 +64,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             self.manager = AWSUserFileManager.defaultUserFileManager()
             self.manager.clearCache()
             let userId = AWSIdentityManager.defaultIdentityManager().identityId!
-           self.prefix = "private/\(userId)/"
+           self.prefix = "public/\(userId)/"
             reloadobjects()
             self.username =   AWSIdentityManager.defaultIdentityManager().userName!
             let usertable = UserMasterTable()
@@ -82,7 +94,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // Image picker
     private func ImagePicker() {
 /*        let imagepickercontroler: UIImagePickerController = UIImagePickerController()
-        imagepickercontroler.allowsEditing = false
+    
+         imagepickercontroler.allowsEditing = false
         imagepickercontroler.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagepickercontroler.delegate = self
         self.presentViewController(imagepickercontroler, animated: true, completion: nil)
@@ -231,6 +244,8 @@ private func uploadWithData(data: NSData, forKey key: String) {
     
     
     private func uploadWithData(data: NSData, forKey key: String) {
+         messlab.text = "Uploading"
+        ActInt.startAnimating()
              let localContent = manager.localContentWithData(data, key: key)
         localContent.uploadWithPinOnCompletion(
             false,
@@ -243,13 +258,16 @@ private func uploadWithData(data: NSData, forKey key: String) {
                 if let error = error { 
                     print("Failed to upload an object. \(error)")
                 } else {
+                     self!.messlab.text = ""
                     print("Object upload complete. ")
-                    self?.reloadobjects()
+            //        self?.reloadobjects()
                 }
+                self?.ActInt.stopAnimating()
             })
     }
     
     private func uploadimages() {
+        ActInt.startAnimating()
         for iimg in images {
             let data = UIImagePNGRepresentation(iimg)!
             let fn = randomString(15)
@@ -257,7 +275,8 @@ private func uploadWithData(data: NSData, forKey key: String) {
             self.uploadWithData(data, forKey: key)
             
         }
- //         reloadobjects()
+     //   ActInt.stopAnimating()
+         self.reloadobjects()
     }
 
 private func createFolderForKey(key: String) {
@@ -287,9 +306,22 @@ private func createFolderForKey(key: String) {
             })
     }
     
+    private func checkspace() {
+        
+        if datalimit < diskspace {
+             uploadbutton.enabled = false
+            self.showSimpleAlertWithTitle("Disk Limit", message: "You have reach your limit", cancelButtonTitle: "OK")
+            
+        } else {
+            uploadbutton.enabled = true
+        }
+    }
+    
     private func downloadObjects() {
         //get all objects/files
-        
+        self.diskspace = 0
+         messlab.text = "Downloading..."
+        ActInt.startAnimating()
         manager.listAvailableContentsWithPrefix(prefix, marker: marker, completionHandler: {[weak self](result: [AWSContent]?, rmark: String?, error: NSError?) -> Void in
             guard let strongSelf = self else { return }
             if  error != nil {
@@ -297,24 +329,32 @@ private func createFolderForKey(key: String) {
             }
             if let resultArray: [AWSContent] = result  {
                 for content: AWSContent in resultArray {
-                    if !content.cached && !content.directory {
+                     if !content.cached && !content.directory {
                 //print("**Key=\(content.key)")
                         self!.downloadContent(content, pinOnCompletion: true)
                         self!.contents.append(content)
+                        self!.diskspace =  self!.diskspace + content.knownRemoteByteCount
+                        
                         self!.tableview.reloadData()
                     }
               }
-            //  self!.tableview.reloadData()
+                 self!.messlab.text = ""
+                self?.ActInt.stopAnimating()
+            self?.checkspace()
             }
             })
     }
     
     private func reloadobjects() {
+    
+        ActInt.startAnimating()
         contents.removeAll()
+        self.manager.clearCache()
         if (AWSIdentityManager.defaultIdentityManager().loggedIn) {
             downloadObjects()
         }
-//        self.tableview.reloadData()
+   //    ActInt.stopAnimating()
+       self.tableview.reloadData()
     }
     
     //segue

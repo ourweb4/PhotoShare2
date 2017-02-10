@@ -79,7 +79,7 @@ class UserMasterTable: NSObject, Table {
         
     }
     
-    func checkuser(username: String) -> String {
+    func checkuser(username: String)  -> String {
         let objectMapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
         var         id: String = ""
         let finduserid = UsermasterUsernameUserId(username: username)
@@ -95,14 +95,16 @@ class UserMasterTable: NSObject, Table {
                    
                 }
                 
+            } else {
+                print("Error checkuser : \(error)")
             }
             
-            
+       
+
         })
+             return id
         
-        
-        return id
-    }
+           }
     
     func deleteuser(userid: String)  {
         let objectMapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
@@ -279,6 +281,7 @@ class UsermasterUsernameUserId: NSObject, Index {
         queryExpression.expressionAttributeValues = [":username": susername,]
         
         objectMapper.query(Usermaster.self, expression: queryExpression, completionHandler: {(response: AWSDynamoDBPaginatedOutput?, error: NSError?) -> Void in
+            
             dispatch_async(dispatch_get_main_queue(), {
                 completionHandler(response: response, error: error)
             })
