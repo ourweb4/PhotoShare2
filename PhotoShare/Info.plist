@@ -91,7 +91,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -121,7 +121,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To select a file to upload.</string>
 	<key>UILaunchStoryboardName</key>
-	<string>Launch Screen</string>
+	<string>Main</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

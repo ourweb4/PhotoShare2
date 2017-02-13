@@ -367,10 +367,10 @@
 				47D473D81E0B125B005CF6F4 /* Sources */,
 				47D473D91E0B125B005CF6F4 /* Frameworks */,
 				47D473DA1E0B125B005CF6F4 /* Resources */,
-				47D4740B1E0B14A5005CF6F4 /* ShellScript */,
 				B6BB2AC495026EE6C90FFC5B /* [CP] Embed Pods Frameworks */,
 				C29D06C751A8B70A3EBAAC47 /* [CP] Copy Pods Resources */,
 				47BF8B401E3FCE2900D31051 /* Embed Frameworks */,
+				47D4740B1E0B14A5005CF6F4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -449,7 +449,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework/strip-frameworks.sh\"\n";
 		};
 		B1737E79D855554F47CDF111 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -652,7 +652,6 @@
 			baseConfigurationReference = C1A6266BF7B8FB013F5C3EBE /* Pods-PhotoShare.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEVELOPMENT_TEAM = 5Z8C2NPWCK;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -662,9 +661,11 @@
 					"$(PROJECT_DIR)/PhotoShare/Sdk/Aws",
 					"$(PROJECT_DIR)/PhotoShare/Sdk/Aws/extras",
 				);
+				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = PhotoShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MACH_O_TYPE = mh_execute;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.ourweb.PhotoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -677,7 +678,7 @@
 			baseConfigurationReference = 790E19457AA7C9224DB09245 /* Pods-PhotoShare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 5Z8C2NPWCK;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -687,9 +688,12 @@
 					"$(PROJECT_DIR)/PhotoShare/Sdk/Aws",
 					"$(PROJECT_DIR)/PhotoShare/Sdk/Aws/extras",
 				);
+				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = PhotoShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MACH_O_TYPE = mh_execute;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.ourweb.PhotoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
